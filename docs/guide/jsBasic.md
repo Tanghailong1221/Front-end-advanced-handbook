@@ -42,6 +42,58 @@
     - [async/await 是什么？](#async/await是什么？)
     - [async/await 相比于Promise的优势？](#async/await相比于Promise的优势？)
 
+## undefined 的三种情况
+
+- ⼀个变量定义了却没有被赋值。
+- ⼀个对象上不存在的属性或者⽅法。
+- ⼀个数组中没有被赋值的元素。
+
+## 对象模型 BOM 里常用的至少4个对象
+
+- Window
+- document
+- location
+- screen
+- history
+- navigator
+
+## document load 和 document ready 的区别
+
+- Document.onload 是在结构和样式加载完才执⾏ js。
+- window.onload：不仅仅要在结构和样式加载完，还要执⾏完所有的样式、图片这些资源文件，全部 加载完才会触发`window.onload`事件。
+- Document.ready 原⽣种没有这个⽅法，`jquery` 中有`$().ready(function)`。
+
+## 普通事件绑定和事件流绑定有啥区别
+
+普通事件绑定
+
+- 如果给同⼀个元素绑定了两次或者多次相同类型的事件，那么后⾯的绑定会覆盖前⾯的绑定。
+- 不支持`dom`事件流（捕获-目标-冒泡）。
+
+事件流绑定
+
+- 如果说给同⼀个元素绑定了两次或者多次相同类型的事件，所以的绑定将会依次触发。
+- 支持`dom`事件流（捕获-目标-冒泡）。
+- 不加`on`事件。
+
+```javascript
+function addEvent(obj,type,callBack){
+    if(obj.addEventListener){
+        obj.addEventListener(type,callBack);
+    }else{
+        obj.attachEvent("on"+type,callBack);
+    }
+}
+addEvent(document,"click",function(){alert("兼容写法")});
+```
+
+## 如何阻止事件冒泡和默认事件
+
+```javascript
+e.preventdefault?e.preventdefault():return value=false
+
+e.stoppropagation?e.stoppropagation():e.cancelbubble=true
+```
 
 ## 解释下变量提升？✨
 

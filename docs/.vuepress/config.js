@@ -5,8 +5,8 @@ module.exports = ctx => ({
   locales: {
     '/': {
       lang: 'zh-CN',
-      title: '前端进阶指南',
-      description: '可能是全网最给力的前端面试项目'
+      title: '前端进阶宝典',
+      description: '可能是全网最全面的前端知识点笔记'
     }
   },
   head: [
@@ -21,7 +21,7 @@ module.exports = ctx => ({
     ['meta', { name: 'msapplication-TileColor', content: '#000000' }]
   ],
   themeConfig: {
-    repo: 'xypisces/front-end-interview',
+    repo: 'Tanghailong1221/Front-end-advanced-handbook',
     editLinks: true,
     docsDir: 'packages/docs/docs',
     locales: {

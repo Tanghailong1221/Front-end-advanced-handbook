@@ -75,11 +75,47 @@ ul ol li .red {
 
 > 还有一些靠绝对定位把元素移到可视区域外，或者用clip-path进行裁剪的操作过于Hack，就不提了。
 
+## display:none和visibility:hidden的区别？
+
+- display:none 隐藏对应的元素，在文档布局中不再给它分配空间，它各边的元素会合拢，就当他从来不存在；
+- visibility:hidden 隐藏对应的元素，但是在文档布局中仍保留原来的空间。
+
 ## em\px\rem区别？
 
 * px：绝对单位，页面按精确像素展示。
 * em：相对单位，基准点为父节点字体的大小，如果自身定义了font-size按自身来计算（浏览器默认字体是16px），整个页面内1em不是一个固定的值。
 * rem：相对单位，可理解为”root em”, 相对根节点html的字体大小来计算，CSS3新加属性，chrome/firefox/IE9+支持
+
+## 常见的替换元素和非替换元素？
+
+- 替换元素
+  - 是指若标签的属性可以改变标签的显示方式就是替换元素，比如`input`的`type`属性不同会有不同的展现，`img`的 `src` 等。
+  - img、input、iframe。
+- 非替换元素
+  - div、span、p。
+
+## 行内元素有哪些？块级元素有哪些？空元素有哪些？
+
+首先：CSS规范规定，每个元素都有display属性，确定该元素的类型，每个元素都有默认的display值，如div的display默认值为“block”，则为“块级”元素；span默认display属性值为“inline”，是“行内”元素。
+
+（1）行内元素`inline`有：
+
+* 不能设置宽高，不能自动换行。
+* `a b span img input select strong（强调的语气）` 
+
+（2）块级元素` block`有：
+
+* 可以设置宽高，会自动换行。
+
+* `div ul ol li dl dt dd h1 h2 h3 h4…p` 
+
+（3）常见的空元素：`<br><hr> <img> <input> <link> <meta>`
+
+（4）行内块元素` inline-block`有：
+
+* 可以设置宽高，会自动换行。
+
+ 鲜为人知的是：`<area> <base> <col> <command> <embed> <keygen> <param> <source> <track> <wbr>`
 
 ## 块级元素水平居中的方法？
 
@@ -127,13 +163,13 @@ table方法
 
 ## CSS有几种定位方式？
 
-* static: 正常文档流定位，此时 top, right, bottom, left 和 z-index 属性无效，块级元素从上往下纵向排布，行级元素从左向右排列。
+* static: 默认值。正常文档流定位，此时 top, right, bottom, left 和 z-index 属性无效，块级元素从上往下纵向排布，行级元素从左向右排列。
 
 * relative：相对定位，此时的『相对』是相对于正常文档流的位置。
 
 * absolute：相对于最近的非 static 定位祖先元素的偏移，来确定元素位置，比如一个绝对定位元素它的父级、和祖父级元素都为relative，它会相对他的父级而产生偏移。
 
-* fixed：指定元素相对于屏幕视口（viewport）的位置来指定元素位置。元素的位置在屏幕滚动时不会改变，比如那种回到顶部的按钮一般都是用此定位方式。
+* fixed：（老IE不支持）生成绝对定位的元素，指定元素相对于屏幕视口（viewport）的位置来指定元素位置。元素的位置在屏幕滚动时不会改变，比如那种回到顶部的按钮一般都是用此定位方式。
 
 * sticky：粘性定位，特性近似于relative和fixed的合体，其在实际应用中的近似效果就是IOS通讯录滚动的时候的『顶屁股』。
 
@@ -144,6 +180,19 @@ table方法
   on <a href="https://codepen.io">CodePen</a>.</span>
 </p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+##  position:absolute和float属性的异同
+
+- 共同点：对内联元素设置`float`和`absolute`属性，可以让元素脱离文档流，并且可以设置其宽高。
+- 不同点：`float`仍会占据位置，`absolute`会覆盖文档流中的其他元素。
+
+## 介绍一下box-sizing属性？
+
+- box-sizing属性主要用来控制元素的盒模型的解析模式。默认值是`content-box`；
+- content-box：让元素维持W3C的标准盒模型。元素的宽度/高度由`border + padding + content`的`宽度/高度`决定，设置`width/height`属性指的是`content`部分的`宽/高`；
+- border-box：让元素维持IE传统盒模型（IE6以下版本和IE6~7的怪异模式）。设置`width/height`属性指的是`border + padding + content`。
+
+**标准浏览器下，按照W3C规范对盒模型解析，一旦修改了元素的边框或内距，就会影响元素的盒子尺寸，就不得不重新计算元素的盒子尺寸，从而影响整个页面的布局。**
 
 ## 如何理解z-index？✨
 
@@ -202,7 +251,30 @@ CSS 中的z-index属性控制重叠元素的垂直叠加顺序，默认元素的
 ## 清除浮动有哪些方法？
 
 * 空div方法：`<div style="clear:both;"></div>`
-* Clearfix 方法：上文使用.clearfix类已经提到
+* after伪类：
+
+```html
+<style>
+    .clearfix:after{/*伪元素是行内元素 正常浏览器清除浮动方法*/
+        content: "";
+        display: block;
+        height: 0;
+        clear:both;
+        visibility: hidden;
+    }
+    .clearfix{
+        *zoom: 1;/*ie6清除浮动的方式 *号只有IE6-IE7执行，其他浏览器不执行*/
+    }
+</style>
+<body>
+    <div class="fahter clearfix">
+        <div class="big">big</div>
+        <div class="small">small</div>
+        <!--<div class="clear">额外标签法</div>-->
+    </div>
+</body>
+```
+
 * overflow: auto或overflow: hidden方法，使用BFC
 
 > 在flex已经成为布局主流之后，浮动这种东西越来越少见了，毕竟它的副作用太大
@@ -367,7 +439,7 @@ translate()是transform的一个值。改变transform或opacity不会触发浏�
 ### 是什么？
 
  伪类（pseudo-class） 是一个以冒号(:)作为前缀，被添加到一个选择器末尾的关键字，当你希望样式在特定状态下才被呈现到指定的元素时，你可以往元素的选择器后面加上对应的伪类。
- 
+
  伪元素用于创建一些不在文档树中的元素，并为其添加样式。比如说，我们可以通过::before来在一个元素前增加一些文本，并为这些文本添加样式。虽然用户可以看到这些文本，但是这些文本实际上不在文档树中。
 
 ### 区别
@@ -390,6 +462,16 @@ translate()是transform的一个值。改变transform或opacity不会触发浏�
 web应用有不同设备尺寸和分辨率，这时需要响应式界面设计来满足复杂的布局需求，Flex弹性盒模型的优势在于开发人员只是声明布局应该具有的行为，而不需要给出具体的实现方式，浏览器负责完成实际布局，当布局涉及到不定宽度，分布对齐的场景时，就要优先考虑弹性盒布局
 
 > 具体用法移步阮一峰的[flex语法](http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html)、[flex实战](http://www.ruanyifeng.com/blog/2015/07/flex-examples.html)，讲得非常通俗易懂，而且我们一两句话说不清楚。
+
+## 什么是FOUC（无样式内容闪烁）？你如何来避免FOUC？
+
+FOUC - FlashOf Unstyled Content 文档样式闪烁
+
+```html
+<styletype="text/css"media="all">@import"../fouc.css";</style>
+```
+
+而引用CSS文件的@import就是造成这个问题的罪魁祸首。IE会先加载整个HTML文档的DOM，然后再去导入外部的CSS文件，因此，在页面DOM加载完成到CSS导入完成中间会有一段时间页面上的内容是没有样式的，这段时间的长短跟网速，电脑速度都有关系。
 
 ## 关于CSS的动画与过渡问题
 
