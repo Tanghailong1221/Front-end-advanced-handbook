@@ -42,106 +42,574 @@
     - [async/await 是什么？](#async/await是什么？)
     - [async/await 相比于Promise的优势？](#async/await相比于Promise的优势？)
 
+## JS的数据类型有哪些
+
+JavaScript 的数据类型可以分为两大类：原始类型（也称为基本类型）和引用类型（复合类型）。下面我将详细介绍这两类数据类型：
+
+### 原始类型 (Primitive Types)
+
+原始类型是不可变的数据类型，意味着它们的值不能被更改。JavaScript 中的原始类型包括：
+
+1. **`number`**
+   - 包括整数和浮点数。
+   - 示例：`42`, `3.14`, `-7`
+2. **`string`**
+   - 用于表示文本字符串。
+   - 示例：`"Hello, world!"`, `'single quotes'`, `"double quotes"`
+3. **`boolean`**
+   - 二进制逻辑值，只有两个可能的值：`true` 和 `false`。
+   - 示例：`true`, `false`
+4. **`null`**
+   - 特殊的空值，表示没有任何对象值。
+   - 示例：`null`
+5. **`undefined`**
+   - 表示一个变量已经声明但还没有被赋值的情况。
+   - 示例：`let x; console.log(x); // undefined`
+6. **`symbol`**
+   - 一种新的原始类型，从 ES6 开始引入，用于创建唯一的标识符。
+   - 示例：`Symbol()`, `Symbol('foo')`
+7. **`bigint`**
+   - 从 ES10 开始引入的一种新的原始类型，用于表示任意大小的整数。
+   - 示例：`9007199254740991n`, `BigInt(123)`
+
+### 引用类型 (Reference Types)
+
+引用类型通常是对象类型的别称，它们存储的是指向实际数据的引用。当赋值或传递这些类型的值时，实际上是复制了这个引用，而不是实际的数据。JavaScript 中的引用类型包括：
+
+1. **`object`**
+   - 对象是一种复杂的数据结构，可以包含键值对形式的属性。
+   - 示例：`{name: 'Alice', age: 25}`
+2. **`array`**
+   - 数组是一种特殊的对象类型，用于存储有序的值列表。
+   - 示例：`[1, 2, 3]`
+3. **`function`**
+   - 函数也是对象，并且可以作为值来处理。
+   - 示例：`function add(a, b) { return a + b; }`
+4. **`date`**, **`regexp`**, **`error`** 等内置对象类型
+   - 这些是特定用途的对象类型，例如日期对象、正则表达式对象和错误对象。
+
+### 特殊值
+
+还有一些特殊的非原始类型值，虽然它们不是基础类型的一部分，但在JavaScript中经常使用：
+
+- **`NaN`** (Not-a-Number)
+  - 表示不是一个有效的数字。
+  - 示例：`0 / 0`, `NaN`
+- **`Infinity`** 和 **`-Infinity`**
+  - 表示无穷大和负无穷大。
+  - 示例：`1 / 0`, `-1 / 0`
+
+这些特殊值的行为类似于 `number` 类型，但在某些数学运算中具有特定的意义。
+
+**总结**
+
+- **原始类型** 是不可变的，而 **引用类型** 是可变的。
+- **原始类型** 存储具体的值，而 **引用类型** 存储指向值的引用。
+- **原始类型** 和 **引用类型** 之间的转换可以通过类型转换函数（如 `Number()`, `String()` 等）实现。
+
 ## undefined 的三种情况
 
-- ⼀个变量定义了却没有被赋值。
-- ⼀个对象上不存在的属性或者⽅法。
-- ⼀个数组中没有被赋值的元素。
+在JavaScript中，`undefined` 是一个原始数据类型，通常表示一个变量已经被声明但是还没有被赋值。`undefined` 还可以出现在其他几种情况下。下面我会详细介绍与 `undefined` 相关的三种常见情况：
+
+### 1. 变量声明但未赋值
+
+当你声明了一个变量但没有给它赋任何值时，它的默认值就是 `undefined`。
+
+#### 示例代码：
+
+```js
+let x;
+console.log(x); // 输出: undefined
+```
+
+### 2. 函数没有返回值
+
+如果你定义了一个函数但没有明确地使用 `return` 语句返回一个值，那么该函数将返回 `undefined`。
+
+#### 示例代码：
+
+```js
+function greet(name) {
+    console.log("Hello, " + name);
+}
+
+const result = greet("John");
+console.log(result); // 输出: undefined
+```
+
+在这个例子中，`greet` 函数执行了打印操作，但没有返回任何值，所以 `result` 的值是 `undefined`。
+
+### 3. 对象属性不存在
+
+当你尝试访问一个对象上不存在的属性时，该属性的值会被认为是 `undefined`。
+
+#### 示例代码：
+
+```js
+const person = {
+    name: "Alice",
+    age: 25
+};
+
+console.log(person.height); // 输出: undefined
+```
+
+在这个例子中，`person` 对象没有 `height` 属性，因此 `person.height` 的值为 `undefined`。
+
+总结一下，`undefined` 在 JavaScript 中主要用作以下几种情况的指示：
+
+- 一个变量被声明但尚未赋值。
+- 一个函数没有返回任何值。
+- 访问对象中的一个不存在的属性。
 
 ## 对象模型 BOM 里常用的至少4个对象
 
-- Window
-- document
-- location
-- screen
-- history
-- navigator
+浏览器对象模型 (BOM) 是一个提供了浏览器窗口和相关功能的 API。BOM 并不是 ECMAScript 标准的一部分，而是由浏览器厂商自己实现的一套 API。BOM 提供了一些核心对象，允许开发者控制浏览器窗口并与其交互。以下是 BOM 中一些常用的对象：
+
+### 1. `window` 对象
+
+`window` 对象是所有 BOM 对象的顶级容器，代表浏览器窗口本身。几乎所有的 BOM 对象都可以通过 `window` 访问到。一些常见的属性和方法包括：
+
+- 属性:
+  - `location`: 获取或设置当前页面的 URL。
+  - `history`: 访问浏览器的历史记录。
+  - `document`: 访问当前窗口的文档对象。
+  - `screen`: 访问屏幕尺寸信息。
+  - `navigator`: 访问浏览器信息。
+  - `innerWidth`/`innerHeight`: 获取窗口的可视区域尺寸。
+  - `outerWidth`/`outerHeight`: 获取窗口的整个尺寸（包括工具栏）。
+  - `pageXOffset`/`pageYOffset`: 滚动条的位置。
+- 方法:
+  - `alert(message)`: 显示警告框。
+  - `confirm(message)`: 显示确认对话框。
+  - `prompt(message[, default])`: 显示提示输入对话框。
+  - `open(url, target, features)`: 打开新窗口。
+  - `close()`: 关闭当前窗口。
+  - `resizeTo(width, height)`: 调整窗口大小。
+  - `resizeBy(width, height)`: 调整窗口大小。
+  - `moveTo(x, y)`: 移动窗口位置。
+  - `moveBy(x, y)`: 移动窗口位置。
+  - `setTimeout(callback, delay[, ...arguments])`: 设置延时调用。
+  - `clearTimeout(timeoutID)`: 清除延时调用。
+  - `setInterval(callback, delay[, ...arguments])`: 设置周期性调用。
+  - `clearInterval(intervalID)`: 清除周期性调用。
+
+### 2. `document` 对象
+
+`document` 对象代表当前加载在浏览器窗口中的 HTML 文档。它允许脚本与网页的内容进行交互。`document` 实际上是一个 `window` 对象的属性，但在这里我们单独列出是因为它非常常用。
+
+- **属性**:
+  - `body`: 获取文档的 `<body>` 元素。
+  - `title`: 获取或设置文档标题。
+  - `referrer`: 获取前一个页面的 URL。
+  - `URL`: 当前文档的 URL。
+  - `domain`: 当前文档的域名。
+  - `cookie`: 当前文档的 cookie 字符串。
+  - `lastModified`: 最后一次修改文档的时间。
+- **方法**:
+  - `getElementById(id)`: 通过 ID 获取元素。
+  - `getElementsByClassName(className)`: 通过类名获取元素集合。
+  - `getElementsByTagName(tagName)`: 通过标签名获取元素集合。
+  - `querySelector(selector)`: 通过 CSS 选择器获取第一个匹配的元素。
+  - `querySelectorAll(selector)`: 通过 CSS 选择器获取所有匹配的元素。
+  - `createElement(tagName)`: 创建一个新的元素节点。
+  - `createTextNode(text)`: 创建一个新的文本节点。
+  - `write(html)`: 将 HTML 写入文档流。
+  - `writeln(html)`: 将 HTML 写入文档流并在末尾添加换行符。
+
+### 3. `location` 对象
+
+`location` 对象提供有关当前文档 URL 的信息，并允许改变当前文档的地址。
+
+- **属性**:
+  - `href`: 当前文档的完整 URL。
+  - `protocol`: 协议（如 http:// 或 https://）。
+  - `host`: 主机名加上端口号。
+  - `hostname`: 仅主机名。
+  - `port`: 端口号。
+  - `pathname`: 当前文档的路径。
+  - `search`: 查询字符串。
+  - `hash`: 锚点。
+- **方法**:
+  - `assign(url)`: 加载指定的 URL。
+  - `reload([forceGet])`: 刷新当前文档。
+  - `replace(url)`: 替换当前文档的历史记录项。
+
+### 4. `history` 对象
+
+`history` 对象提供了浏览器历史记录的功能。
+
+- **属性**:
+  - `length`: 浏览器历史记录条目的数量。
+- **方法**:
+  - `back()`: 返回上一页。
+  - `forward()`: 前往下一页。
+  - `go([delta])`: 前往指定的页面。
+
+### 5. `navigator` 对象
+
+`navigator` 对象提供了有关用户浏览器的信息。
+
+- 属性:
+  - `appName`: 浏览器名称。
+  - `appVersion`: 浏览器版本信息。
+  - `platform`: 用户的操作系统平台。
+  - `userAgent`: 用户代理字符串。
+  - `language`: 用户首选语言。
+  - `languages`: 用户首选语言列表。
 
 ## document load 和 document ready 的区别
 
-- Document.onload 是在结构和样式加载完才执⾏ js。
-- window.onload：不仅仅要在结构和样式加载完，还要执⾏完所有的样式、图片这些资源文件，全部 加载完才会触发`window.onload`事件。
-- Document.ready 原⽣种没有这个⽅法，`jquery` 中有`$().ready(function)`。
+`document load` 和 `document ready` 是两个不同的概念，它们分别描述了文档加载的不同阶段。理解这两个概念的区别对于编写高效的 JavaScript 代码非常重要。
+
+### 1. `document load` (Load Event)
+
+`load` 事件是在文档及其所有依赖资源（如图片、样式表、脚本等）完全加载完毕后触发的。这意味着页面上的所有资源都已经下载完成并且可用。
+
+- **特点**:
+
+  - 确保所有资源都已加载完毕。
+  - 适用于需要等待所有资源加载完成才能运行的代码。
+  - 由于需要等待所有资源加载，可能会导致延迟。
+
+- **示例**:
+
+  ```js
+  window.addEventListener('load', function() {
+      console.log('Document and all resources have been loaded.');
+  });
+  ```
+
+### 2. `document ready` (Ready State)
+
+`document ready` 不是一个正式的事件，而是指文档已经准备好可以被查询和操作的状态。在 jQuery 中，`$(document).ready()` 方法是常用的处理文档准备好的方式。
+
+- **特点**:
+
+  - DOM（文档对象模型）已经加载完成，可以开始操作页面元素。
+  - 不需要等待所有资源加载完毕。
+  - 更快地执行 JavaScript 代码，提高用户体验。
+
+- **示例** (使用 jQuery):
+
+  ```js
+  $(document).ready(function() {
+      console.log('DOM is ready to be manipulated.');
+  });
+  ```
+
+或者简写为:
+
+```js
+$(function() {
+    console.log('DOM is ready to be manipulated.');
+});
+```
+
+### 总结
+
+- **`document load`**:
+  - 等待所有资源加载完毕。
+  - 适用于依赖于页面所有资源加载完成的场景。
+- **`document ready`**:
+  - DOM 加载完成后即可执行。
+  - 更适合大多数场景，因为它提高了应用程序的响应速度。
+
+### 注意事项
+
+- 如果你的代码只需要操作 DOM 而不需要等待图像或其他资源加载完成，那么使用 `document ready` 是更好的选择。
+- 如果你的代码需要等到所有资源都加载完成，比如处理复杂的图像处理或依赖于特定资源的存在，那么应该等待 `document load` 事件。
 
 ## 普通事件绑定和事件流绑定有啥区别
 
-普通事件绑定
+在JavaScript中，事件绑定指的是将一个事件处理程序与一个DOM元素关联起来的过程。根据事件绑定的方式不同，我们可以将其大致分为两类：**普通事件绑定**和**事件流绑定**。下面是这两种绑定方式的详细说明及其区别。
 
-- 如果给同⼀个元素绑定了两次或者多次相同类型的事件，那么后⾯的绑定会覆盖前⾯的绑定。
-- 不支持`dom`事件流（捕获-目标-冒泡）。
+### 1. 普通事件绑定 (Standard Event Binding)
 
-事件流绑定
+普通事件绑定是最常见的事件绑定方式，它直接将事件处理器与特定的DOM元素绑定在一起。当事件发生时，事件处理器会被调用。
 
-- 如果说给同⼀个元素绑定了两次或者多次相同类型的事件，所以的绑定将会依次触发。
-- 支持`dom`事件流（捕获-目标-冒泡）。
-- 不加`on`事件。
+#### 特点：
 
-```javascript
-function addEvent(obj,type,callBack){
-    if(obj.addEventListener){
-        obj.addEventListener(type,callBack);
-    }else{
-        obj.attachEvent("on"+type,callBack);
-    }
-}
-addEvent(document,"click",function(){alert("兼容写法")});
+- 事件处理器直接绑定到目标元素上。
+- 通常使用 `element.addEventListener` 或者 `element.onclick = function` 这样的方式绑定。
+- 事件处理器只能在目标元素上触发。
+
+#### 示例代码：
+
+```js
+// 使用 addEventListener
+button.addEventListener('click', function(event) {
+    console.log('Button was clicked!');
+});
+
+// 使用 onclick 属性
+button.onclick = function(event) {
+    console.log('Button was clicked!');
+};
 ```
+
+### 2. 事件流绑定 (Event Delegation or Event Bubbling)
+
+事件流绑定利用了事件冒泡的机制，将事件处理器绑定到一个父元素上，而不是直接绑定到目标元素上。这样做的好处是可以处理动态生成的子元素的事件，而无需为每个子元素单独绑定事件处理器。
+
+#### 特点：
+
+- 事件处理器绑定到父元素上。
+- 利用了事件冒泡机制，在事件冒泡过程中捕获事件。
+- 可以处理动态生成的子元素的事件。
+
+#### 示例代码：
+
+```js
+// 使用 addEventListener 并在父元素上监听
+parentElement.addEventListener('click', function(event) {
+    if (event.target.matches('.child-element')) {
+        console.log('Child element was clicked!');
+    }
+});
+```
+
+### 比较与区别
+
+- **直接绑定 vs 事件委托**:
+  - 直接绑定将事件处理器直接绑定到目标元素上。
+  - 事件委托将事件处理器绑定到父元素上，通过事件冒泡机制来处理子元素的事件。
+- **性能**:
+  - 直接绑定可能需要为多个元素分别绑定事件处理器，如果元素很多，这可能会导致性能问题。
+  - 事件委托只需要一个事件处理器，减少了内存占用和事件处理器的数量，从而提高性能。
+- **灵活性**:
+  - 直接绑定适用于静态页面，其中元素在页面加载时就已经存在。
+  - 事件委托适用于动态页面，特别是当页面元素动态生成或频繁变化时。
+- **代码维护**:
+  - 直接绑定可能需要为每个元素维护单独的事件处理器。
+  - 事件委托通常只需要一个事件处理器，简化了代码维护。
+
+### 总结
+
+选择哪种事件绑定方式取决于具体的应用场景。如果页面元素较少且不经常变化，使用普通的事件绑定方式就足够了。但如果页面元素很多或经常动态生成，则使用事件流绑定（事件委托）可以显著提高代码的效率和可维护性。
 
 ## 如何阻止事件冒泡和默认事件
 
-```javascript
-e.preventdefault?e.preventdefault():return value=false
+在JavaScript中，阻止事件冒泡和默认行为是事件处理中的两个常见需求。下面我将分别解释如何实现这两点：
 
-e.stoppropagation?e.stoppropagation():e.cancelbubble=true
-```
+### 阻止事件冒泡
 
-## 解释下变量提升？✨
+事件冒泡是指事件从最深的节点开始向上冒泡，直到到达文档根节点。这意味着一个事件可以被多个元素监听并响应。如果你不想让事件继续向上冒泡，可以使用 `stopPropagation()` 方法。
 
-JavaScript引擎的工作方式是，先解析代码，获取所有被声明的变量，然后再一行一行地运行。这造成的结果，就是所有的变量的声明语句，都会被提升到代码的头部，这就叫做变量提升（hoisting）。
+#### 示例代码：
 
 ```js
-console.log(a) // undefined
+document.getElementById('myButton').addEventListener('click', function(event) {
+    event.stopPropagation(); // 阻止事件冒泡
+    console.log('Button clicked');
+});
 
-var a = 1
-
-function b() {
-    console.log(a)
-}
-b() // 1
+document.getElementById('myDiv').addEventListener('click', function(event) {
+    console.log('Div clicked');
+});
 ```
 
-上面的代码实际执行顺序是这样的:
+在这个例子中，当按钮被点击时，点击事件不会冒泡到包含它的 `div` 元素，因此 `Div clicked` 不会被输出。
 
-第一步： 引擎将`var a = 1`拆解为`var a = undefined`和 `a = 1`，并将`var a = undefined`放到最顶端，`a = 1`还在原来的位置
+### 阻止默认行为
 
-这样一来代码就是这样:
+阻止默认行为是指取消浏览器对某些事件的默认处理方式。例如，点击链接会跳转到新的页面，提交表单会重新加载页面等。你可以使用 `preventDefault()` 方法来阻止这些默认行为。
+
+#### 示例代码：
 
 ```js
-var a = undefined
-console.log(a) // undefined
-
-a = 1
-
-function b() {
-    console.log(a)
-}
-b() // 1
+document.getElementById('myLink').addEventListener('click', function(event) {
+    event.preventDefault(); // 阻止链接的默认行为
+    console.log('Link clicked but not navigated');
+});
 ```
 
-第二步就是执行，因此js引擎一行一行从上往下执行就造成了当前的结果，这就叫变量提升。
+在这个例子中，点击链接时控制台会输出 `Link clicked but not navigated`，但页面不会跳转到链接指向的URL。
+
+### 使用 `return false`
+
+除了使用 `preventDefault()` 和 `stopPropagation()` 外，还可以使用 `return false` 的方式同时阻止事件冒泡和默认行为。这是因为返回 `false` 通常意味着取消默认行为并且停止事件传播。
+
+#### 示例代码：
+
+```js
+document.getElementById('myForm').addEventListener('submit', function(event) {
+   	 console.log('Form submitted');
+    return false; // 阻止默认行为并且停止事件传播
+});
+```
+
+在这个例子中，当表单被提交时，控制台会输出 `Form submitted`，但页面不会重新加载。
+
+### 注意事项
+
+- 使用 `event.preventDefault()` 和 `event.stopPropagation()` 需要确保事件处理函数中使用了 `event` 参数。
+- 如果事件处理函数是匿名函数或者箭头函数，那么 `this` 关键字将会指向全局对象（浏览器中通常是 `window`）。如果需要访问元素本身，可以使用 `event.currentTarget`。
+- 如果使用 `return false` 的方式，注意它会同时阻止默认行为和冒泡，所以在某些情况下可能不需要这么做。
+
+## 解释下变量提升✨
+
+变量提升（hoisting）是JavaScript中一个重要的特性，它影响着变量声明的解析过程。变量提升并不是真正地将变量移动到作用域的顶部，而是一种语法糖，用来描述JavaScript引擎在编译阶段如何处理变量声明。
+
+### 变量提升的基本概念
+
+变量提升意味着变量声明会被提前到作用域的顶部，但这只包括变量的声明部分，而不包括初始化部分。也就是说，变量会被声明，但如果没有显式地初始化，它们会被赋予默认值 `undefined`。
+
+### 例子
+
+让我们来看几个例子来更好地理解变量提升的概念。
+
+#### 1. 变量声明提升
+
+```js
+console.log(x); // 输出: undefined
+var x = 5;
+```
+
+在这个例子中，尽管 `x` 的赋值发生在变量使用之后，但由于变量提升的作用，`x` 的声明被提升到了作用域的顶部。因此，这段代码实际上相当于下面的形式：
+
+```js
+var x; // 声明被提升
+console.log(x); // 输出: undefined
+x = 5; // 初始化
+```
+
+#### 2. 函数声明提升
+
+函数声明也会被提升，这意味着可以在声明之前调用函数。
+
+```js
+console.log(greet("Alice")); // 输出: Hello, Alice!
+
+function greet(name) {
+    return "Hello, " + name + "!";
+}
+```
+
+实际上，这段代码会被解释器处理为如下形式：
+
+```js
+function greet(name) {
+    return "Hello, " + name + "!";
+}
+
+console.log(greet("Alice")); // 输出: Hello, Alice!
+```
+
+#### 3. 函数表达式不提升
+
+函数表达式的赋值不会被提升，只有变量声明会被提升。
+
+```js
+console.log(greet("Bob")); // 输出: TypeError: greet is not a function
+
+var greet = function(name) {
+    return "Hello, " + name + "!";
+};
+```
+
+这段代码实际上会被解释器处理为如下形式：
+
+```js
+var greet; // 变量声明被提升
+console.log(greet("Bob")); // 输出: TypeError: greet is not a function
+greet = function(name) {
+    return "Hello, " + name + "!";
+};
+```
+
+### 注意事项
+
+- **变量提升只涉及声明**：变量的初始化部分不会被提升。
+- **函数声明会被完全提升**：不仅声明会被提升，函数体也会被提升。
+- **函数表达式只提升变量声明**：函数表达式的赋值部分不会被提升。
+- **`let` 和 `const` 的提升行为**：虽然 `let` 和 `const` 也会提升声明，但它们处于暂时性死区（TDZ），即在声明之前不能被访问。
 
 > 原理详解请移步,[预解释与变量提升](hoisting.md)
 
-## 一段JavaScript代码是如何执行的？✨
+## 一段JavaScript代码是如何执行的✨
+
+JavaScript代码的执行过程涉及到多个步骤，包括编译、执行、作用域解析、垃圾回收等。下面我将详细解释这些步骤以及它们如何共同作用来执行JavaScript代码。
+
+### 1. 编译
+
+在JavaScript代码被执行之前，JavaScript引擎首先会对代码进行预处理和编译。这个过程包括解析源代码并构建抽象语法树（Abstract Syntax Tree, AST）。AST是一个表示代码结构的树形数据结构，它使得JavaScript引擎能够更容易地理解和执行代码。
+
+### 2. 执行上下文创建
+
+JavaScript引擎创建一个执行上下文（Execution Context）来跟踪代码的执行状态。执行上下文有两种主要类型：全局执行上下文和函数执行上下文。
+
+- **全局执行上下文**：这是程序启动时创建的第一个执行上下文，它包含全局变量和全局函数。
+- **函数执行上下文**：每当一个函数被调用时都会创建一个新的函数执行上下文。
+
+### 3. 作用域链
+
+每个执行上下文都有一个作用域链（Scope Chain），它是一个指向作用域的链表，用于解析变量和函数的标识符。作用域链的头部始终是当前执行上下文的局部作用域，后面跟着父级作用域，最后是全局作用域。
+
+### 4. 变量提升
+
+在执行上下文创建的过程中，JavaScript引擎会进行变量提升。这意味着所有变量和函数声明都会被提升到当前作用域的顶部，但只有声明会被提升，初始化部分不会被提升。
+
+### 5. 代码执行
+
+一旦执行上下文和作用域链建立好，JavaScript引擎就会按照顺序执行代码。代码执行时，引擎会逐行读取和执行语句。
+
+### 6. 变量和函数的解析
+
+在执行过程中，如果遇到变量或函数的引用，JavaScript引擎会沿着作用域链查找相应的定义。如果在当前作用域找不到，引擎将继续向上查找，直到找到定义或到达全局作用域。
+
+### 7. 函数调用
+
+当遇到函数调用时，JavaScript引擎会创建一个新的函数执行上下文，并将其压入执行上下文栈。然后，函数内部的代码开始执行，直到函数返回。
+
+### 8. 垃圾回收
+
+JavaScript引擎使用自动垃圾回收机制来管理内存。当不再需要某个变量或对象时，它们会被标记为可回收，最终由垃圾回收器释放内存。
+
+### 9. 异步事件处理
+
+JavaScript是单线程的，但支持异步编程模式，如回调函数、Promises 和 async/await。异步操作通常使用事件循环机制来处理，它们会在适当的时机被加入到任务队列中，并在主线程空闲时执行。
+
+### 10. 事件循环
+
+事件循环是JavaScript中处理异步操作的核心机制。它不断地检查是否有待处理的任务，如果有，则从任务队列中取出任务并执行。事件循环确保JavaScript能够处理异步事件而不会阻塞主线程。
+
+### 示例代码执行流程
+
+假设我们有以下简单的JavaScript代码：
+
+```js
+console.log("Start");
+
+function greet(name) {
+    console.log("Hello, " + name + "!");
+}
+
+greet("Alice");
+
+console.log("End");
+```
+
+### 执行流程分析
+
+1. **编译**：
+   - JavaScript引擎解析代码并构建AST。
+   - 创建全局执行上下文。
+2. **变量提升**：
+   - 变量 `greet` 的声明被提升到全局作用域的顶部。
+   - 函数 `greet` 的声明被提升。
+3. **执行**：
+   - 执行 `console.log("Start");`，输出 "Start"。
+   - 调用 `greet("Alice")`
+     - 创建一个新的函数执行上下文。
+     - 在函数作用域中，参数 `name` 被赋值为 "Alice"。
+     - 执行 `console.log("Hello, " + name + "!");`，输出 "Hello, Alice!"。
+     - 函数执行上下文被销毁。
+   - 执行 `console.log("End");`，输出 "End"。
 
 > 此部分涉及概念较多，请移步[JavaScript执行机制](mechanism)
 
-## 理解闭包吗？✨
-
-这个问题其实在问：
-
-1. 闭包是什么？
-2. 闭包有什么作用？
+## 讲讲对闭包的理解与使用场景✨
 
 ### 闭包是什么
 
@@ -149,28 +617,25 @@ MDN的解释：闭包是函数和声明该函数的词法环境的组合。
 
 按照我的理解就是：闭包 =『函数』和『函数体内可访问的变量总和』
 
-举个简单的例子:
+### 闭包的定义
 
-```js
-(function() {
-    var a = 1;
-    function add() {
-        var b = 2
+闭包是由函数及其相关的引用环境组合而成的一个实体。简单来说，当一个函数能够记住并访问在其外部定义的变量时，就形成了一个闭包。这些变量不会因为外部函数执行结束而被垃圾回收。
 
-        var sum = b + a
-        console.log(sum); // 3
-    }
-    add()
-})()
-```
+### 闭包的组成
 
-`add`函数本身，以及其内部可访问的变量，即 `a = 1`，这两个组合在一起就被称为闭包，仅此而已。
+闭包由三部分组成：
+
+1. **函数**：一个函数体。
+2. **引用环境**：函数体内部引用的所有外部变量。
+3. **作用域链**：用于解析变量的链表。
+
+### 闭包的工作原理
+
+当一个函数被定义在一个外层函数内部时，它可以访问外层函数的局部变量、参数以及其他定义在外层函数内的函数。当外层函数执行完毕后，内层函数仍然可以访问这些变量，即使这些变量原本应该随着外层函数的执行结束而被销毁。
 
 ### 闭包的作用
 
-闭包最大的作用就是隐藏变量，闭包的一大特性就是**内部函数总是可以访问其所在的外部函数中声明的参数和变量，即使在其外部函数被返回（寿命终结）了之后**
-
-基于此特性，JavaScript可以实现私有变量、特权变量、储存变量等
+闭包最大的作用就是隐藏变量，闭包的一大特性就是**内部函数总是可以访问其所在的外部函数中声明的参数和变量，即使在其外部函数被返回（寿命终结）了之后**。基于此特性，JavaScript可以实现私有变量、特权变量、储存变量等。
 
 我们就以私有变量举例，私有变量的实现方法很多，有靠约定的（变量名前加_）,有靠Proxy代理的，也有靠Symbol这种新数据类型的。
 
@@ -197,17 +662,196 @@ console.log(name) //name is not defined
 
 函数体内的`var name = 'cxk'`只有`getName`和`setName`两个函数可以访问，外部无法访问，相对于将变量私有化。
 
-## JavaScript的作用域链理解吗？✨
+### 使用场景
 
-JavaScript属于静态作用域，即声明的作用域是根据程序正文在编译时就确定的，有时也称为词法作用域。
+闭包在JavaScript中有多种使用场景，以下是一些常见的应用场景：
+
+1. **模块化编程**：
+
+   - 闭包可以用来模拟私有成员（变量和函数），这对于实现模块化编程非常有用。
+   - 通过闭包，你可以创建一个公共接口，而将内部实现细节隐藏起来。
+
+   ```js
+   function createCounter() {
+       let count = 0;
+   
+       function increment() {
+           count++;
+           return count;
+       }
+   
+       function decrement() {
+           count--;
+           return count;
+       }
+   
+       return {
+           increment,
+           decrement
+       };
+   }
+   
+   const counter = createCounter();
+   console.log(counter.increment()); // 输出: 1
+   console.log(counter.decrement()); // 输出: 0
+   ```
+
+2. **事件处理**：
+
+   - 闭包可以用来在事件处理函数中保存上下文信息。
+   - 例如，当创建一系列按钮时，每个按钮的点击事件处理函数都需要访问不同的数据。
+
+   ```js
+   function createButtons(count) {
+       for (let i = 1; i <= count; i++) {
+           const button = document.createElement('button');
+           button.textContent = 'Button ' + i;
+           button.addEventListener('click', function() {
+               console.log('Button ' + i + ' was clicked');
+           });
+           document.body.appendChild(button);
+       }
+   }
+   
+   createButtons(3);
+   ```
+
+3. **函数工厂**：
+
+   - 闭包可以用来创建函数工厂，即一个函数返回另一个函数。
+   - 这种模式在创建带有预设参数的函数时非常有用。
+
+   ```js
+   function createAdder(x) {
+       return function(y) {
+           return x + y;
+       };
+   }
+   
+   const addFive = createAdder(5);
+   console.log(addFive(10)); // 输出: 15
+   ```
+
+4. **保持状态**：
+
+   - 闭包可以用来保持函数执行之间的一些状态。
+   - 这对于实现计数器、定时器等功能非常有用。
+
+   ```js
+   function createTimer() {
+       let start = Date.now();
+   
+       return function() {
+           return Date.now() - start;
+       };
+   }
+   
+   const timer = createTimer();
+   console.log(timer()); // 输出: 从创建到现在经过的时间（毫秒）
+   ```
+
+### 闭包注意事项
+
+- **内存泄漏**：如果闭包中的变量没有正确地释放，可能会导致内存泄漏。
+- **作用域链**：闭包中的函数可以访问其外部作用域中的变量，但不能访问同级作用域中的变量。
+- **性能考虑**：闭包可能会导致额外的内存消耗，特别是在大量使用闭包的情况下。
+
+### 总结
+
+闭包是JavaScript中一个非常强大的特性，它允许函数保留对外部作用域变量的引用。通过合理地使用闭包，可以实现许多高级功能，如模块化、事件处理、状态保持等。理解闭包的工作原理对于编写高效、可维护的JavaScript代码至关重要。
+
+## 对JavaScript的作用域链的理解✨
+
+作用域链（Scope Chain）是JavaScript中一个非常重要的概念，它决定了变量的可访问性和查找机制。作用域链定义了变量解析的规则，即当JavaScript引擎试图查找一个变量时，它会遵循一个特定的路径来寻找该变量的定义。下面我将详细介绍作用域链的概念、工作原理以及一些示例。
+
+### 作用域链的基本概念
+
+在JavaScript中，每个执行上下文（Execution Context）都有一个与之相关联的作用域链。作用域链是一个指针列表，它包含了当前执行上下文以及所有父级执行上下文的作用域。作用域链的主要目的是允许引擎查找变量和函数的定义。
 
 其本质是JavaScript在执行过程中会创造可执行上下文，可执行上下文中的词法环境中含有外部词法环境的引用，我们可以通过这个引用获取外部词法环境的变量、声明等，这些引用串联起来一直指向全局的词法环境，因此形成了作用域链。
 
 ![2019-06-20-06-00-27]( https://xiaomuzhu-image.oss-cn-beijing.aliyuncs.com/0f1701f3b7061942ae24a9357f28bc2e.png)
 
+### 执行上下文
+
+执行上下文分为两种类型：
+
+- **全局执行上下文**：当JavaScript程序开始执行时，会创建一个全局执行上下文。它包含了全局变量和函数。
+- **函数执行上下文**：每当一个函数被调用时，都会创建一个新的函数执行上下文。
+
+### 作用域链的构建
+
+当一个函数执行上下文被创建时，JavaScript引擎会构建一个作用域链，这个作用域链包含当前函数的作用域以及所有父级函数的作用域，一直到全局作用域。
+
+### 作用域链的查找机制
+
+当JavaScript引擎尝试查找一个变量或函数时，它会从当前执行上下文的作用域开始查找，如果没有找到，则沿着作用域链向上查找，直到找到变量的定义或到达全局作用域。如果在全局作用域中仍然没有找到，那么该变量被认为是未定义的。
+
+### 示例代码
+
+让我们通过一个简单的示例来说明作用域链的工作原理：
+
+```js
+function outerFunction() {
+    var outerVar = "I'm outer";
+
+    function innerFunction() {
+        var innerVar = "I'm inner";
+        console.log(outerVar); // 输出: I'm outer
+        console.log(innerVar); // 输出: I'm inner
+    }
+
+    innerFunction();
+}
+
+outerFunction();
+```
+
+### 作用域链分析
+
+1. **全局执行上下文**：
+   - 创建全局执行上下文，其中包括全局变量和函数。
+   - 全局作用域成为作用域链的最后一个环节。
+2. **`outerFunction` 执行上下文**：
+   - 当 `outerFunction` 被调用时，创建一个 `outerFunction` 执行上下文。
+   - 构建作用域链，它包含当前函数的作用域和全局作用域。
+   - `outerVar` 被定义在当前作用域中。
+3. **`innerFunction` 执行上下文**：
+   - 当 `innerFunction` 被调用时，创建一个 `innerFunction` 执行上下文。
+   - 构建作用域链，它包含当前函数的作用域、`outerFunction` 的作用域和全局作用域。
+   - `innerVar` 被定义在当前作用域中。
+   - 当尝试访问 `outerVar` 时，它首先在当前作用域中查找，然后沿着作用域链向上查找，最终在 `outerFunction` 的作用域中找到。
+
+### 作用域链与闭包
+
+闭包是作用域链的一个应用。当一个函数返回一个内部函数时，内部函数可以访问并保持对其外部作用域中的变量的引用。这是因为内部函数的作用域链包含了外部函数的作用域，即使外部函数已经执行完毕，内部函数仍然可以访问这些变量。
+
+### 示例代码
+
+```js
+function outerFunction() {
+    var outerVar = "I'm outer";
+
+    function innerFunction() {
+        console.log(outerVar); // 输出: I'm outer
+    }
+
+    return innerFunction;
+}
+
+const innerFunc = outerFunction();
+innerFunc(); // 输出: I'm outer
+```
+
+### 总结
+
+- **作用域链** 是由当前执行上下文的作用域和所有父级执行上下文的作用域组成的链表。
+- **作用域链** 用于查找变量和函数的定义。
+- **闭包** 是作用域链的一个应用，允许内部函数访问外部函数的作用域中的变量。
+
 > 原理详解请移步[JavaScript执行机制](#mechanism)
 
-## ES6模块与CommonJS模块有什么区别？
+## ES6模块与CommonJS模块有什么区别
 
 ES6 Module和CommonJS模块的区别：
 
