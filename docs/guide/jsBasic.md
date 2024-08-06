@@ -113,6 +113,126 @@ JavaScript中Number.MAX_SAFE_INTEGER表示最大安全数字,计算结果是9007
 
 但是一旦超过这个范围，js就会出现计算不准确的情况，这在大数计算的时候不得不依靠一些第三方库进行解决，因此官方提出了BigInt来解决此问题。
 
+## JavaScript的参数是按照什么方式传递的
+
+在JavaScript中，参数的传递方式取决于参数的类型。JavaScript有两种基本的数据类型：原始类型（primitive types）和引用类型（reference types）。原始类型直接存储值，而引用类型存储的是指向值的引用。
+
+### 原始类型
+
+原始类型包括 `number`, `string`, `boolean`, `symbol`, `bigint`, `undefined`, 和 `null`。这些类型的数据是按值传递的。
+
+#### 特点：
+
+- 当你将一个原始类型的值传递给函数时，函数内部收到的是这个值的一个副本。
+- 在函数内部对原始类型的值所做的任何更改都不会影响到原始值本身。
+
+#### 示例代码：
+
+```js
+function updateValue(value) {
+    value = 10;
+}
+
+let num = 5;
+updateValue(num);
+console.log(num); // 输出: 5
+```
+
+在这个例子中，`num` 的值仍然是 5，尽管我们在 `updateValue` 函数中尝试将其更改为 10。这是因为传递给函数的 `value` 参数是 `num` 的一个副本，对 `value` 的更改不会影响到原始变量 `num`。
+
+### 引用类型
+
+引用类型包括 `object` 和 `array`。这些类型的数据是按引用传递的。
+
+#### 特点：
+
+- 当你将一个引用类型的值传递给函数时，函数内部收到的是指向该值的引用。
+- 在函数内部对引用类型的值所做的任何更改都会影响到原始值。
+
+#### 示例代码：
+
+```js
+function updateArray(arr) {
+    arr.push(3);
+}
+
+let numbers = [1, 2];
+updateArray(numbers);
+console.log(numbers); // 输出: [1, 2, 3]
+```
+
+在这个例子中，`numbers` 数组在 `updateArray` 函数内部被修改了。这是因为传递给函数的 `arr` 参数实际上是指向 `numbers` 数组的引用，对 `arr` 的更改会影响到原始数组 `numbers`。
+
+### 总结
+
+- **原始类型**：按值传递。在函数内部对原始类型的值所做的任何更改都不会影响到原始值。
+- **引用类型**：按引用传递。在函数内部对引用类型的值所做的任何更改都会影响到原始值。
+
+## JavaScript的基本类型和复杂类型是储存在哪里的
+
+### 基本类型（Primitive Types）
+
+基本类型包括 `number`, `string`, `boolean`, `undefined`, `null`, `symbol`, 和 `bigint`。这些类型的数据直接存储在变量的堆栈内存中。
+
+#### 存储位置
+
+- **堆栈内存**：基本类型的值直接存储在变量所在的堆栈内存中。
+- **值传递**：当基本类型的值被传递给函数时，传递的是值的副本，而不是指向值的引用。
+
+#### 示例：
+
+```js
+let num = 5;
+let anotherNum = num; // 另一个变量接收 num 的值
+num = 10;
+console.log(anotherNum); // 输出: 5
+```
+
+在这个例子中，`anotherNum` 的值没有随着 `num` 的变化而变化，因为它们存储的是独立的值。
+
+### 复杂类型（Reference Types）
+
+复杂类型包括 `object`, `array`, `function` 等。这些类型的数据存储在堆内存中。
+
+#### 存储位置
+
+- **堆内存**：复杂类型的值存储在堆内存中。
+- **引用传递**：当复杂类型的值被传递给函数时，传递的是指向该值的引用，而不是值本身。
+
+#### 示例：
+
+```js
+let obj = { name: "Alice" };
+let anotherObj = obj; // 另一个变量接收 obj 的引用
+obj.name = "Bob";
+console.log(anotherObj.name); // 输出: Bob
+```
+
+在这个例子中，`anotherObj` 的 `name` 属性随着 `obj` 的变化而变化，因为它们指向同一个对象。
+
+### 内存分配
+
+- **堆栈内存**：用于存储基本类型的值和复杂类型的引用。
+- **堆内存**：用于存储复杂类型的值（即对象本身）。
+
+### 内存管理
+
+JavaScript 的内存管理是由垃圾回收机制自动完成的。当一个变量不再被引用时，垃圾回收器会自动释放相应的内存空间。
+
+- **基本类型**：当一个基本类型的变量不再被引用时，它占用的内存会被垃圾回收器回收。
+- **复杂类型**：当一个对象不再被任何变量引用时，它占用的内存会被垃圾回收器回收。
+
+### 总结
+
+- 基本类型：
+  - 存储在堆栈内存中。
+  - 值传递。
+- 复杂类型：
+  - 存储在堆内存中。
+  - 引用传递。
+
+> 原理解析请移步[JavaScript内存管理](#memory.md)
+
 ## undefined 的三种情况
 
 在JavaScript中，`undefined` 是一个原始数据类型，通常表示一个变量已经被声明但是还没有被赋值。`undefined` 还可以出现在其他几种情况下。下面我会详细介绍与 `undefined` 相关的三种常见情况：
@@ -1771,118 +1891,413 @@ button.addEventListener("click", () => {
 - **箭头函数中的 `this`**：箭头函数没有自己的 `this` 值，而是从其封闭作用域继承 `this` 的值。
 - **词法作用域**：箭头函数遵循词法作用域，这意味着 `this` 的值在定义时就已经确定了。
 
-## async/await是什么？
+## async/await是什么
 
-async 函数，就是 Generator 函数的语法糖，它建立在Promises上，并且与所有现有的基于Promise的API兼容。
+`async/await` 是JavaScript中处理异步操作的一种方式，它让异步代码看起来像同步代码一样简洁易读。`async/await` 是基于Promise构建的，它使得异步函数的编写更加直观和简洁。
 
-1. Async—声明一个异步函数(async function someName(){...})
+### `async` 关键字
 
-* 自动将常规函数转换成Promise，返回值也是一个Promise对象
-* 只有async函数内部的异步操作执行完，才会执行then方法指定的回调函数
-* 异步函数内部可以使用await
+`async` 关键字用于声明一个函数为异步函数。这样的函数会返回一个Promise对象。如果函数体中没有任何 `await` 表达式，返回的Promise会自动解析为函数的返回值。
 
+#### 示例：
 
-2. Await—暂停异步的功能执行(var result = await someAsyncCall();)
-
-* 放置在Promise调用之前，await强制其他代码等待，直到Promise完成并返回结果
-* 只能与Promise一起使用，不适用与回调
-* 只能在async函数内部使用
-
-## async/await相比于Promise的优势？
-
-* 代码读起来更加同步，Promise虽然摆脱了回调地狱，但是then的链式调用也会带来额外的阅读负担
-* Promise传递中间值非常麻烦，而async/await几乎是同步的写法，非常优雅
-* 错误处理友好，async/await可以用成熟的try/catch，Promise的错误捕获非常冗余
-* 调试友好，Promise的调试很差，由于没有代码块，你不能在一个返回表达式的箭头函数中设置断点，如果你在一个.then代码块中使用调试器的步进(step-over)功能，调试器并不会进入后续的.then代码块，因为调试器只能跟踪同步代码的『每一步』。
-
-## JavaScript的参数是按照什么方式传递的？
-
-### 基本类型传递方式
-由于js中存在**复杂类型**和**基本类型**,对于**基本类型**而言,是按值传递的.
-
-```javascript
-var a = 1;
-function test(x) {
-  x = 10;
-  console.log(x);
+```js
+async function fetchUser() {
+    const response = await fetch('https://api.example.com/user');
+    const user = await response.json();
+    return user;
 }
-test(a); // 10
-console.log(a); // 1
 ```
 
-虽然在函数`test`中`a`被修改,并没有有影响到
-外部`a`的值,基本类型是按值传递的.
+### `await` 关键字
 
-### 复杂类型按引用传递? 
+`await` 关键字用于等待一个Promise解析完成。`await` 只能在 `async` 函数内部使用。当 `await` 一个Promise时，如果Promise成功，`await` 表达式的结果就是该Promise的成功值；如果Promise失败，`await` 表达式会抛出一个异常，需要通过 `try...catch` 块来捕获。
 
-我们将外部`a`作为一个对象传入`test`函数.
+#### 示例：
 
-```javascript
-var a = {
-  a: 1,
-  b: 2
+```js
+async function fetchUser() {
+    try {
+        const response = await fetch('https://api.example.com/user');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const user = await response.json();
+        console.log(user);
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    }
+}
+```
+
+### 优点
+
+- **更简洁的语法**：`async/await` 使得异步代码看起来更像是同步代码，提高了代码的可读性和可维护性。
+- **错误处理**：可以使用传统的 `try...catch` 结构来处理错误，使错误处理更加直观。
+- **简化Promise链**：避免了Promise链中的回调地狱（callback hell），使得代码更加简洁。
+
+### 示例代码
+
+下面是一个使用 `async/await` 的完整示例，演示了如何从API获取数据并处理可能发生的错误：
+
+```js
+async function fetchUser() {
+    try {
+        const response = await fetch('https://api.example.com/user');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const user = await response.json();
+        console.log(user);
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    }
+}
+
+fetchUser();
+```
+
+### 注意事项
+
+- **`await` 必须在 `async` 函数内部使用**：你不能在普通的同步函数中使用 `await` 关键字。
+- **`async` 函数总是返回一个Promise**：即使没有显式返回值，`async` 函数也会返回一个解析为 `undefined` 的Promise。
+- **`async` 函数可以抛出异常**：如果 `async` 函数中有一个未捕获的异常，它会被转化为一个被拒绝的Promise。
+
+### 总结
+
+- **`async`** 关键字用于声明一个函数为异步函数，这样的函数返回一个Promise。
+- **`await`** 关键字用于等待一个Promise的解析结果，只能在 `async` 函数内部使用。
+- **`async/await`** 使得异步代码更加简洁、直观，提高了代码的可读性和可维护性。
+
+## async/await相比于Promise的优势
+
+### 1. 更简洁的语法
+
+`async/await` 使得异步代码看起来更像同步代码，提高了代码的可读性和可维护性。这使得代码更容易理解，尤其是对于那些不熟悉异步编程的新手来说。
+
+#### 示例：
+
+使用Promise：
+
+```js
+fetch('https://api.example.com/user')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(user => console.log(user))
+    .catch(error => console.error('There has been a problem with your fetch operation:', error));
+```
+
+使用 `async/await`：
+
+```js
+async function fetchUser() {
+    try {
+        const response = await fetch('https://api.example.com/user');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const user = await response.json();
+        console.log(user);
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    }
+}
+
+fetchUser();
+```
+
+### 2. 错误处理
+
+`async/await` 可以使用传统的 `try...catch` 结构来处理错误，使得错误处理更加直观。这样可以更容易地捕获和处理错误，而不需要层层嵌套的 `.catch()`。
+
+#### 示例：
+
+使用Promise：
+
+```js
+fetch('https://api.example.com/user')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(user => console.log(user))
+    .catch(error => console.error('There has been a problem with your fetch operation:', error));
+```
+
+使用 `async/await`：
+
+```js
+async function fetchUser() {
+    try {
+        const response = await fetch('https://api.example.com/user');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const user = await response.json();
+        console.log(user);
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    }
+}
+
+fetchUser();
+```
+
+### 3. 简化Promise链
+
+`async/await` 避免了Promise链中的回调地狱（callback hell），使得代码更加简洁。这意味着你可以更容易地管理复杂的异步流程。
+
+#### 示例：
+
+使用Promise：
+
+```js
+fetch('https://api.example.com/user')
+    .then(user => {
+        return fetch(`https://api.example.com/posts?userId=${user.id}`);
+    })
+    .then(postsResponse => {
+        return postsResponse.json();
+    })
+    .then(posts => {
+        console.log(posts);
+    })
+    .catch(error => console.error('There has been a problem with your fetch operation:', error));
+```
+
+使用 `async/await`：
+
+```js
+async function fetchPostsForUser(userId) {
+    try {
+        const userResponse = await fetch(`https://api.example.com/user?id=${userId}`);
+        const user = await userResponse.json();
+
+        const postsResponse = await fetch(`https://api.example.com/posts?userId=${user.id}`);
+        const posts = await postsResponse.json();
+
+        console.log(posts);
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    }
+}
+
+fetchPostsForUser(1);
+```
+
+### 4. 易于调试
+
+由于 `async/await` 使得异步代码看起来更像同步代码，因此在调试时更容易设置断点和跟踪代码执行流程。
+
+### 5. 更好的控制流
+
+使用 `async/await` 可以更容易地控制异步操作的顺序，比如在一系列异步操作之间插入同步操作。
+
+### 总结
+
+- **更简洁的语法**：`async/await` 使得异步代码更加简洁易读。
+- **错误处理**：可以使用传统的 `try...catch` 结构来处理错误，使错误处理更加直观。
+- **简化Promise链**：避免了Promise链中的回调地狱，使得代码更加简洁。
+- **易于调试**：由于代码看起来更像同步代码，因此更容易调试。
+- **更好的控制流**：更容易控制异步操作的顺序。
+
+## 聊一聊如何在JavaScript中实现不可变对象
+
+在JavaScript中实现不可变对象可以通过多种方式来完成。不可变对象指的是对象的状态一旦创建之后就不能被改变的对象。这有助于提高代码的可预测性和减少潜在的bug。
+
+### 1. 使用 `Object.freeze()`
+
+`Object.freeze()` 方法可以冻结一个对象，使其成为不可变的。冻结后的对象不允许添加新属性，现有的属性也不能被修改，也不能删除现有属性。
+
+#### 示例代码：
+
+```js
+const person = {
+    name: "Alice",
+    age: 25
 };
-function test(x) {
-  x.a = 10;
-  console.log(x);
-}
-test(a); // { a: 10, b: 2 }
-console.log(a); // { a: 10, b: 2 }
 
+Object.freeze(person);
+
+// 尝试修改属性
+person.name = "Bob"; // 不会改变 person.name 的值
+
+// 尝试添加新属性
+person.gender = "female"; // 不会添加新属性
+
+// 尝试删除属性
+delete person.age; // 不会删除 age 属性
+
+console.log(person); // 输出: { name: "Alice", age: 25 }
 ```
 
-可以看到,在函数体内被修改的`a`对象也同时影响到了外部的`a`对象,可见复杂类型是按**引用传递的**.
+### 2. 使用只读属性
 
-可是如果再做一个实验:
+通过定义只读属性，我们可以创建不可变对象。在ES6中，我们可以使用 `Object.defineProperty()` 方法来定义只读属性。
 
-```javascript
-var a = {
-  a: 1,
-  b: 2
+#### 示例代码：
+
+```js
+const person = {};
+
+Object.defineProperty(person, 'name', {
+    value: "Alice",
+    writable: false,
+    enumerable: true,
+    configurable: false
+});
+
+Object.defineProperty(person, 'age', {
+    value: 25,
+    writable: false,
+    enumerable: true,
+    configurable: false
+});
+
+// 尝试修改属性
+person.name = "Bob"; // 不会改变 person.name 的值
+
+console.log(person); // 输出: { name: "Alice", age: 25 }
+```
+
+### 3. 使用 `Object.preventExtensions()`
+
+`Object.preventExtensions()` 方法阻止向对象添加新属性，但现有的属性仍然可以被修改。如果你想创建一个不可添加新属性但允许修改现有属性的对象，可以使用这个方法。
+
+#### 示例代码：
+
+```js
+const person = {
+    name: "Alice",
+    age: 25
 };
-function test(x) {
-  x = 10;
-  console.log(x);
-}
-test(a); // 10
-console.log(a); // { a: 1, b: 2 }
+
+Object.preventExtensions(person);
+
+// 尝试添加新属性
+person.gender = "female"; // 不会添加新属性
+
+console.log(person); // 输出: { name: "Alice", age: 25 }
 ```
 
-外部的`a`并没有被修改,如果是按引用传递的话,由于共享同一个堆内存,`a`在外部也会表现为`10`才对.
-此时的复杂类型同时表现出了`按值传递`和`按引用传递`的特性.
+### 4. 使用 `Object.seal()`
 
-### 按共享传递
+`Object.seal()` 方法不仅阻止向对象添加新属性，还阻止删除现有属性，但现有属性仍然可以被修改。如果你想创建一个不可添加新属性也不可删除现有属性的对象，可以使用这个方法。
 
-复杂类型之所以会产生这种特性,原因就是在传递过程中,对象`a`先产生了一个`副本a`,这个`副本a`并不是深克隆得到的`副本a`,`副本a`地址同样指向对象`a`指向的堆内存.
+#### 示例代码：
 
-![](http://omrbgpqyl.bkt.clouddn.com/17-8-31/72507393.jpg)
+```js
+const person = {
+    name: "Alice",
+    age: 25
+};
 
-因此在函数体中修改`x=10`只是修改了`副本a`,`a`对象没有变化.
-但是如果修改了`x.a=10`是修改了两者指向的同一堆内存,此时对象`a`也会受到影响.
+Object.seal(person);
 
-有人讲这种特性叫做**传递引用**,也有一种说法叫做**按共享传递**.
+// 尝试添加新属性
+person.gender = "female"; // 不会添加新属性
 
-## 聊一聊如何在JavaScript中实现不可变对象？
+// 尝试删除属性
+delete person.age; // 不会删除 age 属性
 
-实现不可变数据有三种主流的方法
+console.log(person); // 输出: { name: "Alice", age: 25 }
+```
 
-1. 深克隆，但是深克隆的性能非常差，不适合大规模使用
-2. Immutable.js，Immutable.js是自成一体的一套数据结构，性能良好，但是需要学习额外的API
-3. immer，利用Proxy特性，无需学习额外的api，性能良好
+### 5. 使用 `const` 和深拷贝
+
+如果对象是浅层的，可以使用 `const` 和深拷贝来创建一个不可变的对象。
+
+#### 示例代码：
+
+```js
+const person = {
+    name: "Alice",
+    age: 25
+};
+
+const immutablePerson = JSON.parse(JSON.stringify(person));
+
+// 尝试修改属性
+immutablePerson.name = "Bob"; // 不会改变 immutablePerson.name 的值
+
+console.log(immutablePerson); // 输出: { name: "Alice", age: 25 }
+```
+
+请注意，这种方法仅适用于浅层的对象，对于包含深层嵌套对象的情况，需要使用专门的深拷贝库或函数来处理。
+
+### 总结
+
+- **`Object.freeze()`**：最严格的不可变性，禁止修改现有属性的值、添加新属性或删除现有属性。
+- **只读属性**：使用 `Object.defineProperty()` 来定义只读属性。
+- **`Object.preventExtensions()`**：防止添加新属性，但允许修改现有属性。
+- **`Object.seal()`**：防止添加新属性和删除现有属性，但允许修改现有属性的值。
+- **使用 `const` 和深拷贝**：创建一个不可变的浅层对象。
 
 > 原理详解请移步[实现JavaScript不可变数据](#immuatble)
 
-## JavaScript的基本类型和复杂类型是储存在哪里的？
+## 讲讲JavaScript垃圾回收是怎么做的
 
-基本类型储存在栈中，但是一旦被闭包引用则成为常住内存，会储存在内存堆中。
+JavaScript的垃圾回收机制负责自动管理内存，确保不再使用的内存能够被及时释放。垃圾回收的主要目标是回收不再被程序引用的对象所占用的内存空间。下面是关于JavaScript垃圾回收的一些关键概念和机制。
 
-复杂类型会储存在内存堆中。
+### JavaScript中的垃圾回收机制
 
-> 原理解析请移步[JavaScript内存管理](#memory.md)
+JavaScript的垃圾回收主要依赖于两种机制：标记-清除（Mark and Sweep）和引用计数（Reference Counting）。
 
-## 讲讲JavaScript垃圾回收是怎么做的？
+#### 1. 标记-清除（Mark and Sweep）
 
-此过程比较复杂，请看详细解析。
+标记-清除算法是最常见的垃圾回收算法之一。它分为两个阶段：标记和清除。
+
+- **标记**：垃圾回收器遍历所有可达对象，并标记这些对象。可达对象是指可以从根节点（如全局对象、活动对象等）直接或间接访问到的对象。
+- **清除**：垃圾回收器清理未被标记的对象，即认为这些对象已经不再被使用，可以安全地回收它们占用的内存。
+
+#### 2. 引用计数（Reference Counting）
+
+引用计数是一种早期的垃圾回收策略，它记录每个对象被引用的次数。当一个对象的引用计数变为零时，该对象就可以被回收。
+
+然而，JavaScript引擎很少单独使用引用计数，因为它无法处理循环引用的问题。在循环引用的情况下，即使对象不再被需要，它们之间的相互引用也会导致引用计数始终大于零，从而阻止垃圾回收器回收这些对象。
+
+### JavaScript中的垃圾回收算法
+
+现代JavaScript引擎通常使用更高级的垃圾回收算法，如分代收集（Generational Collection）、增量标记（Incremental Marking）等。
+
+#### 3. 分代收集（Generational Collection）
+
+分代收集假设对象越年轻，它成为垃圾的可能性越大。基于这个假设，JavaScript引擎将对象划分为不同的代，新创建的对象放在年轻代，经过一段时间存活下来的对象会被移动到老年代。
+
+- **年轻代**：对象生命周期较短的对象存储在这里。年轻代的垃圾回收频率较高。
+- **老年代**：长期存活的对象存储在这里。老年代的垃圾回收频率较低。
+
+#### 4. 增量标记（Incremental Marking）
+
+增量标记是一种优化技术，它将标记阶段分成多个较小的任务，这些任务可以在其他JavaScript任务之间执行。这种方式减少了标记阶段对应用程序性能的影响。
+
+### 垃圾回收的触发时机
+
+JavaScript的垃圾回收机制通常是自动触发的，但也可以通过以下方式显式触发：
+
+- **手动触发**：在V8引擎中，可以使用 `gc()` 函数手动触发垃圾回收。但这不是标准JavaScript的一部分，通常不建议使用。
+- **自动触发**：当内存占用达到一定阈值时，JavaScript引擎会自动触发垃圾回收。
+
+### 如何帮助垃圾回收
+
+虽然JavaScript的垃圾回收机制是自动的，但开发者可以通过以下方式帮助提高垃圾回收的效率：
+
+- **及时解除引用**：当不再需要一个对象时，显式地将其引用设置为 `null` 或者其他值，帮助垃圾回收器更快地识别无用对象。
+- **避免循环引用**：确保对象之间没有不必要的循环引用。
+- **使用弱引用**：某些JavaScript引擎支持弱引用，可以用来避免循环引用问题。
+
+### 总结
+
+- **标记-清除**：最常用的垃圾回收算法，分为标记和清除两个阶段。
+- **分代收集**：基于对象的生命周期将对象划分成不同的代，年轻代的对象更容易成为垃圾。
+- **增量标记**：将标记阶段分解为多个小任务，减少对应用程序性能的影响。
+- **手动触发**：虽然可以手动触发垃圾回收，但这通常不是最佳实践。
 
 > 原理解析请移步[JavaScript内存管理](#memory.md)
 
